@@ -10,6 +10,9 @@ var XMLJS = require('xml2js');
 var parser = new XMLJS.Parser();
 var builder = new XMLJS.Builder();
 var access_token = "";
+var APPID = "";  	//微信公众号APPID
+var SECRET = "";	//微信公众号SECRET
+var weiappAPPID = "";	//微信小程序APPID
 
 function check(params, token){
     var key = [token, params.timestamp, params.nonce].sort().join('');
@@ -45,7 +48,7 @@ var server = http.createServer(function(request, response){
 				getQRcode(post.seconds, post.scene_id);
 				var timer = setInterval(function(){
 					if(read_end){
-						fs.readFile('/www/web/47_106_156_128/public_html/QRcode.jpg', function(err, data){
+						fs.readFile('../QRcode.jpg', function(err, data){
 							if(err){
 								response.status(500);
 								console.log("error");
@@ -72,7 +75,7 @@ var server = http.createServer(function(request, response){
 					//xml = builder.buildObject(xml);
 					var scene = body.EventKey.toString();
 					console.log(scene)
-					var contents = "<a data-miniprogram-appid=\"wxab4e848bef0d7870\" data-miniprogram-path=\"pages/welcome/welcome?scene=" + scene + "\"> Click for Vision Screening </a>"
+					var contents = "<a data-miniprogram-appid=" + weiappAPPID + " data-miniprogram-path=\"pages/welcome/welcome?scene=" + scene + "\"> Click for Vision Screening </a>"
 					console.log(contents);
 					response.end("");
 					var send_data = JSON.stringify({
@@ -127,8 +130,8 @@ function getQRcode(seconds, id) {
 	//-----------------------get access_token----------------------
 	var token_data = qs.stringify({
 		grant_type: "client_credential",
-		appid: "wxe819d76a197619d2",
-		secret: "f52d4a19838af040ce6aacd115b04e55",
+		appid: APPID,
+		secret: SECRET,
 	});
 
 	var token_options = {
@@ -191,7 +194,7 @@ function getQRcode(seconds, id) {
 						})
 						res.on('end', function(){
 							console.log("QRcode");
-							fs.writeFile("/www/web/47_106_156_128/public_html/QRcode.jpg", code, "binary", function(err) {
+							fs.writeFile("../QRcode.jpg", code, "binary", function(err) {
 								console.log(err);
 								return;
 							});
